@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You Monali 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --pink: #ff4d6d; }
+        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; overflow-x: hidden; width: 100%; }
+
+        /* --- PASSWORD PAGE STYLE --- */
+        #password-screen {
+            height: 100vh; background: url("bg.jpeg") no-repeat center center/cover;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .pass-container {
+            background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(5px);
+            padding: 25px; border-radius: 20px; text-align: center; width: 85%; max-width: 350px;
+        }
+        .pass-container input { margin-top: 20px; width: 90%; padding: 12px; border-radius: 10px; border: 1px solid #ccc; outline: none; text-align: center; }
+
+        /* --- ENVELOPE STYLE --- */
+        #envelope-screen {
+            height: 100vh; display: none; justify-content: center; align-items: center; background: #ffd6e0; flex-direction: column;
+        }
+        .envelope { position: relative; width: 300px; height: 200px; background: #c9182b; border-radius: 12px; cursor: pointer; overflow: hidden; transition: 0.4s; }
+        .flap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #e63946; clip-path: polygon(0 0, 100% 0, 50% 50%); transform-origin: top; transition: 0.6s; z-index: 3; }
+        .letter { position: absolute; bottom: -100%; left: 0; width: 100%; height: 100%; background: #fff; padding: 15px; text-align: center; font-size: 14px; transition: 0.6s; box-sizing: border-box; color: #000; z-index: 2;}
+        .open .flap { transform: rotateX(180deg); }
+        .open .letter { bottom: 0; }
+        .hint { margin-top: 15px; color: #c9182b; font-weight: bold; }
+
+        /* --- GOJO GAME STYLE --- */
+        #game-content { display: none; width: 100%; height: 100vh; position: relative; }
+        #bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: url('background.jpeg') no-repeat center center fixed; background-size: cover; }
+        #bgVideo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; filter: brightness(0.5); }
+        
+        .screen { height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; position: absolute; transition: 0.8s; box-sizing: border-box; padding: 20px; }
+        .hidden { display: none !important; }
+
+        .photo-frame { width: 85vw; height: 110vw; max-width: 320px; max-height: 420px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+        
+        .collage-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px; background: white; border-radius: 15px; width: 90%; }
+        .collage-grid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; }
+
+        /* --- BADI SIZE KE LIYE CHANGES --- */
+        .center-video { width: 95%; max-height: 60vh; border-radius: 20px; object-fit: contain; }
+        
+        .btn { padding: 12px 25px; border: none; border-radius: 25px; background: #ff4d6d; color: white; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+        
+        #pickup-box { position: absolute; background: white; padding: 15px; border-radius: 20px; border: 3px solid var(--pink); display: none; text-align: center; width: 80%; z-index:100; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body>
+
+    <div id="password-screen">
+        <div class="pass-container">
+            <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
+                <img src="emoji.png" width="55">
+                <h1 style="margin:0; font-size: 24px;">Hey cutie</h1>
+            </div>
+            <h2 style="font-weight:500; font-size: 20px;">something special</h2>
+            <p>For u.... 😘💖</p>
+            <input type="password" id="pass" placeholder="Enter Password">
+            <button class="btn" onclick="checkPass()">Enter 💕</button>
+        </div>
+    </div>
+
+    <div id="envelope-screen">
+        <div class="envelope" onclick="this.classList.toggle('open')">
+            <div class="flap"></div>
+            <div class="letter">
+                <div style="margin-top:10px;">
+                    Hey ❤️, aaj Valentine Day hai.<br>
+                    main to waha nahi aa sakta,<br>
+                    lekin tumhe wish zarur kar sakta hu 💌<br><br>
+                    <b>Happy Valentine's Day 💖</b><br>
+                    Aage maine bahut kuch add kiya hai,<br>
+                    dekhna zarur 👀✨
+                </div>
+            </div>
+        </div>
+        <div class="hint">Tap the envelope to open 💕</div>
+        <button id="nextToGame" class="btn" style="margin-top:30px; display:none;" onclick="startGame()">Next ✨</button>
+    </div>
+
+    <div id="game-content">
+        <div id="bg-container"><video muted loop id="bgVideo"><source src="background-video.mp4" type="video/mp4"></video></div>
+        <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
+
+        <div id="slide1" class="screen">
+            <div style="position: absolute; top: 10%; width: 100%; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <img src="new rose.jpeg" style="width:55px;" onclick="handleRose(0, this)">
+                <img src="new rose.jpeg" style="width:55px;" onclick="handleRose(1, this)">
+                <img src="new rose.jpeg" style="width:55px;" onclick="handleRose(2, this)">
+                <img src="new rose.jpeg" style="width:55px;" onclick="handleRose(3, this)">
+                <img src="new rose.jpeg" style="width:55px;" onclick="handleRose(4, this)">
+            </div>
+            <img src="gojo new.jpeg" style="width:70%; max-width:250px; margin-top:40px;">
+            <div id="pickup-box">
+                <h3 id="p-name" style="color:var(--pink); margin:0;"></h3>
+                <p id="p-line" style="font-size: 14px;"></p>
+                <button class="btn" onclick="nextRose()">Next Rose 🌹</button>
+            </div>
+            <button id="startBtn" class="btn hidden" onclick="startMoments()">See Special Moments ✨</button>
+        </div>
+
+        <div id="slide2" class="screen hidden">
+            <h2 style="color:white; text-shadow: 0 0 10px var(--pink); text-align:center;">Special Memories...</h2>
+            <div class="photo-frame"><img id="main-img" src="photo1.jpeg"></div>
+            <button id="nextPhotoBtn" class="btn" onclick="nextPhoto()">Next Photo 📸</button>
+        </div>
+
+        <div id="slideCollage" class="screen hidden">
+            <h2 style="color:white; text-shadow: 0 0 10px var(--pink); text-align:center; font-size: 18px;">Every Moment is Better With You!</h2>
+            <div class="collage-grid">
+                <img src="photo1.jpeg"> <img src="photo2.jpeg">
+                <img src="photo3.jpeg"> <img src="photo4.jpeg">
+            </div>
+            <button class="btn" onclick="toValentine()">Click for a Question 💖</button>
+        </div>
+
+        <div id="slide3" class="screen hidden">
+            <h2 style="color:white; text-shadow: 0 0 15px var(--pink); text-align:center;">Will You Be My Valentine?</h2>
+            <img src="new cat.jpeg" class="center-video">
+            <div style="display:flex; gap:15px; margin-top:20px;">
+                <button class="btn" onclick="goToFinal()">Yes</button>
+                <button id="no-btn" class="btn" onmouseover="changeToYes()" onclick="goToFinal()">No</button>
+            </div>
+        </div>
+
+        <div id="slide4" class="screen hidden">
+            <h2 style="color:white; text-align:center; text-shadow: 0 0 15px var(--pink);">Thank you for becoming my girlfriend! 💖</h2>
+            <video src="flower.mp4" class="center-video" autoplay loop muted playsinline></video>
+        </div>
+    </div>
+
+    <script>
+        function checkPass() {
+            const p = document.getElementById("pass").value;
+            if (p.toLowerCase() === "monali") {
+                document.getElementById('password-screen').style.display = 'none';
+                document.getElementById('envelope-screen').style.display = 'flex';
+            } else { alert("Wrong password 😅"); }
+        }
+
+        document.querySelector('.envelope').addEventListener('click', function() {
+            setTimeout(() => { document.getElementById('nextToGame').style.display = 'block'; }, 1000);
+        });
+
+        function startGame() {
+            document.getElementById('envelope-screen').style.display = 'none';
+            document.getElementById('game-content').style.display = 'block';
+        }
+
+        const lines = [
+            {n: "Monali", l: "My love for you is as infinite as Gojo's power."},
+            {n: "Monali", l: "“Tum mere phone ka favourite app ho, bina khole raha hi nahi jaata 📱💖"},
+            {n: "Monali", l: "I'm the strongest, but I'm weak for you."},
+            {n: "Monali", l: "Tumhari smile password hoti na, to main life bhar locked reh jaata 😌"},
+            {n: "Monali", l: "Tum Wi-Fi ho kya? Dil automatically connect ho jata hai"}
+        ];
+
+        let count = 0, pIdx = 0;
+        const photos = ["photo1.jpeg", "photo2.jpeg", "photo3.jpeg", "photo4.jpeg"];
+
+        function handleRose(i, el) { 
+            el.style.visibility = 'hidden'; 
+            document.getElementById('p-name').innerText = lines[i].n; 
+            document.getElementById('p-line').innerText = lines[i].l; 
+            document.getElementById('pickup-box').style.display = 'block'; 
+        }
+        function nextRose() { 
+            document.getElementById('pickup-box').style.display = 'none'; 
+            count++; 
+            if(count === 5) document.getElementById('startBtn').classList.remove('hidden'); 
+        }
+        
+        function transition(from, to) {
+            document.getElementById(from).classList.add('hidden');
+            setTimeout(() => { 
+                document.getElementById(from).style.display = 'none'; 
+                document.getElementById(to).classList.remove('hidden'); 
+                document.getElementById(to).style.display = 'flex';
+            }, 500);
+        }
+
+        function startMoments() {
+            document.getElementById('bg-container').style.background = "black";
+            const v = document.getElementById('bgVideo'); v.style.display = "block"; v.play();
+            document.getElementById('bgMusic').play();
+            transition('slide1', 'slide2');
+        }
+
+        function nextPhoto() {
+            pIdx++;
+            if(pIdx < photos.length) {
+                const img = document.getElementById('main-img');
+                img.src = photos[pIdx];
+            } else { transition('slide2', 'slideCollage'); }
+        }
+
+        function toValentine() { transition('slideCollage', 'slide3'); }
+        function changeToYes() { const b = document.getElementById('no-btn'); b.innerText = "Yes"; b.style.backgroundColor = "#ff4d6d"; }
+        function goToFinal() { transition('slide3', 'slide4'); }
+    </script>
+</body>
+</html>
